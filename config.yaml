@@ -1,0 +1,57 @@
+name: "Bluetti PR30V2 (BLE → MQTT)"
+version: "0.1.0"
+slug: bluetti_pr30v2
+description: "Чтение данных и управление Bluetti PR30V2 по Bluetooth LE с публикацией в Home Assistant через MQTT Discovery"
+url: "https://github.com/Patrick762/bluetti-bt-lib"
+arch:
+  - amd64
+  - aarch64
+startup: application
+boot: auto
+init: false
+# Доступ к BlueZ на хосте HAOS
+host_dbus: true
+apparmor: false
+privileged:
+  - NET_ADMIN
+# Брокер MQTT (аддон Mosquitto) подхватывается автоматически
+services:
+  - mqtt:want
+options:
+  mac: "FF:FF:FF:FF:FF:FF"
+  device_type: "PR30V2"
+  encryption: true
+  poll_interval: 30
+  command_timeout: 60
+  device_name: "Bluetti PR30V2"
+  log_level: "info"
+  mqtt_host: ""
+  mqtt_port: 1883
+  mqtt_username: ""
+  mqtt_password: ""
+  controls:
+    - name: "AC Output"
+      field: "ctrl_ac"
+      on_args: "--on on"
+      off_args: "--off off"
+    - name: "DC Output"
+      field: "ctrl_dc"
+      on_args: "--on on"
+      off_args: "--off off"
+schema:
+  mac: str
+  device_type: str
+  encryption: bool
+  poll_interval: int(10,3600)
+  command_timeout: int(10,300)
+  device_name: str
+  log_level: list(debug|info|warning|error)
+  mqtt_host: str?
+  mqtt_port: port?
+  mqtt_username: str?
+  mqtt_password: password?
+  controls:
+    - name: str
+      field: str
+      on_args: str
+      off_args: str
